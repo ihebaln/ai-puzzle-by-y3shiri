@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- The webpage language is English -->
+  <head>
+    <!-- ── META TAGS ──────────────────────────────────────────── -->
+    <meta charset="UTF-8" /> <!-- Tells the browser to use UTF-8 character encoding (supports all characters) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Makes the page responsive on mobile devices -->
+    <title>AI Puzzle by y3shiri</title> <!-- The text that appears in the browser tab -->
+
+    <!-- ── FONTS ──────────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" /> <!-- Pre-connect to Google Fonts (faster loading) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> <!-- Pre-connect for cross-origin font loading -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    /> <!-- Loads two fonts from Google: Inter (main font) and JetBrains Mono (for code/timers) -->
+
+    <!-- ── TAILWIND CSS ──────────────────────────────────────── -->
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Loads Tailwind CSS from CDN (utility-first CSS framework) -->
+    <script>
+      tailwind.config = { // Customize Tailwind's configuration
+        theme: {
+          extend: { // Extend the default theme (don't override, add new things)
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'], // Sets 'Inter' as the default sans-serif font
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace'], // Sets 'JetBrains Mono' for monospace text
+            },
+            colors: { accent: '#ccff00' }, // Adds a custom color called 'accent' (neon green)
+          },
+        },
+      };
+    </script>
+
+    <!-- ── CUSTOM STYLES ──────────────────────────────────────── -->
+    <style>
+      :root { --accent: #ccff00; } /* Defines a CSS variable for the accent color */
+
+      * { box-sizing: border-box; } /* Makes padding and border included in element's total width/height */
+      html, body, #root { height: 100%; } /* Makes the page and the root element fill the entire screen */
+      body {
+        margin: 0; /* Remove default margin */
+        font-family: 'Inter', system-ui, sans-serif; /* Use Inter font */
+        color: #fff; /* White text color */
+        overflow: hidden; /* Prevents scrolling (no scrollbars) */
+        background:
+          /* Creates a dark gradient background with glowing effects */
+          radial-gradient(1200px 800px at 18% 8%, #1c2a3a 0%, rgba(10,14,20,0) 55%), /* Top-left glow (blue-ish) */
+          radial-gradient(1000px 700px at 85% 90%, #241a3a 0%, rgba(10,14,20,0) 55%), /* Bottom-right glow (purple-ish) */
+          #06080c; /* Very dark base color */
+      }
+      .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; } /* Class for monospace font */
+
+      /* ── GLASSMORPHISM CLASSES ──────────────────────────────── */
+      .glass {
+        /* Frosted glass effect - used for modal popups */
+        background: rgba(18, 20, 28, 0.55); /* Semi-transparent dark background */
+        backdrop-filter: blur(18px) saturate(160%); /* Blur the background behind the element (makes it look like glass) */
+        -webkit-backdrop-filter: blur(18px) saturate(160%); /* Same but for Safari browser */
+        border: 1px solid rgba(255, 255, 255, 0.12); /* Subtle white border */
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.4), /* Dark shadow below */
+          inset 0 1px 0 rgba(255, 255, 255, 0.08); /* Subtle white glow inside (top edge) */
+      }
+      .glass-soft {
+        /* Softer glass effect - used for smaller UI elements */
+        background: rgba(255, 255, 255, 0.07); /* Very faint white background */
+        backdrop-filter: blur(12px) saturate(150%); /* Less blur than .glass */
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        border: 1px solid rgba(255, 255, 255, 0.12); /* Subtle white border */
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25); /* Dark shadow below */
+      }
+      .glass-overlay {
+        /* Full-screen overlay with glass effect - used for loading screens */
+        background: linear-gradient(180deg, rgba(5, 7, 10, 0.6), rgba(5, 7, 10, 0.78)); /* Dark gradient */
+        backdrop-filter: blur(22px) saturate(140%); /* Strong blur for the overlay */
+        -webkit-backdrop-filter: blur(22px) saturate(140%);
+      }
+      .accent-glow {
+        box-shadow: 0 0 24px rgba(204, 255, 0, 0.3); /* Creates a neon green glow around the element */
+      }
+
+      /* ── SCROLLBAR STYLING ──────────────────────────────────── */
+      .custom-scrollbar::-webkit-scrollbar { width: 6px; } /* Width of the scrollbar */
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } /* No background for the track */
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(204, 255, 0, 0.4); /* Neon green scrollbar thumb */
+        border-radius: 999px; /* Fully rounded corners */
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(204, 255, 0, 0.6); } /* Darker on hover */
+
+      /* ── ANIMATIONS ──────────────────────────────────────────── */
+      @keyframes lpFade {
+        /* Simple fade in animation */
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes lpSlideDown {
+        /* Slide down from top and fade in (for centered elements) */
+        from { opacity: 0; transform: translate(-50%, -12px); } /* Starts 12px above */
+        to { opacity: 1; transform: translate(-50%, 0); } /* Ends at normal position */
+      }
+      @keyframes lpSlideDownLeft {
+        /* Slide down from top and fade in (for left-aligned elements) */
+        from { opacity: 0; transform: translateY(-12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes lpPop {
+        /* Pop-in effect (scale up from smaller) */
+        0% { opacity: 0; transform: scale(0.92); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      .anim-fade { animation: lpFade 0.4s ease both; } /* Apply fade animation */
+      .left-1\/2.anim-slide-down {
+        animation: lpSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      } /* Apply slide-down animation to centered elements */
+      .anim-slide-down {
+        animation: lpSlideDownLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      } /* Apply slide-down animation to left-aligned elements */
+      .anim-pop { animation: lpPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; } /* Apply pop animation */
+    </style>
+  </head>
+  <body>
+    <!-- ── HTML CONTENT ────────────────────────────────────────── -->
+    <div id="root"></div> <!-- React will render the app inside this empty div -->
+
+    <!-- ── JAVASCRIPT ──────────────────────────────────────────── -->
+    <script type="module" src="/src/main.tsx"></script> <!-- Loads the main React application file (TypeScript) -->
+  </body>
+</html>
